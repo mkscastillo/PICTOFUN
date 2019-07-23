@@ -1,5 +1,4 @@
 import { Component, Input, ElementRef, AfterViewInit, ViewChild, OnInit, HostListener, Injectable } from '@angular/core';
-// import { Socket } from 'ng-socket-io';
 import { fromEvent } from 'rxjs';
 import { switchMap, takeUntil, pairwise } from 'rxjs/operators'
 import * as io from "socket.io-client";
@@ -19,7 +18,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   
   @Input() markerColor: string;
   @Input() size : number;
-
+  
   socket = io();
 
   public cx: CanvasRenderingContext2D;
@@ -116,14 +115,12 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         // this method we'll implement soon to do the actual drawing
         this.drawOnCanvas(prevPos, currentPos,this.markerColor, this.size);
         this.socket.emit("draw-coordinates",{prevPos: prevPos, currentPos: currentPos,color: this.markerColor, size: this.size});
-
       });
   }
 
 
 
   private drawOnCanvas(prevPos: { x: number, y: number }, currentPos: { x: number, y: number }, color, size) {
-      console.log("drawing");
       this.cx.strokeStyle = color;
       this.cx.lineWidth = size;
     if (!this.cx) { return; }

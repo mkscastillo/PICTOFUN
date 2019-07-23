@@ -8,9 +8,9 @@ import * as io from "socket.io-client";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-
 export class AppComponent implements AfterViewInit{
     socket: any;
+
     @ViewChild(CanvasComponent, {static:false})
     private canvasComponent : CanvasComponent;
 

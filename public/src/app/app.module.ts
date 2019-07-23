@@ -5,10 +5,6 @@ import { AppComponent } from './app.component';
 import { CanvasComponent } from './canvas/canvas.component';
 import { ColorPickerModule } from 'ngx-color-picker';
 
-// import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
-
-// const config: SocketIoConfig = { url: 'http://localhost:8000', options: {} };
-
 @NgModule({
   declarations: [
     AppComponent,
