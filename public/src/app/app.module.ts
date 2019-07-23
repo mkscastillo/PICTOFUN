@@ -5,6 +5,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GameComponent } from './game/game.component';
 
+import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
+ 
+const config: SocketIoConfig = { url: 'http://localhost:8000', options: {} };
+
 @NgModule({
   declarations: [
     AppComponent,
