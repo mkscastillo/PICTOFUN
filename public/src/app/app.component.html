@@ -1,12 +1,32 @@
-<script type="text/javascript" src="/socket.io/socket.io.js"></script>
-        
+<head>
+    <!-- jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
 
-<h1>
-    Picto-fun!
-</h1>
+<h1>PictoFun</h1>
+<h2>It's picture fun for everyone!</h2>
+<div class="container">
+    <!-- canvas nav -->
+    <div class="navbar navbar-light bg-light">
+        <input (colorPickerChange)="update(color)" (colorPickerSelect)="update(color)"  [cpOKButton]="true" [(colorPicker)]="color" [style.background]="color" [cpPosition]= "'bottom'" value="Choose Color" />
+        <button (click)="small()">Small</button>
+        <button (click)="medium()">Medium</button>
+        <button (click)="large()">Large</button>
+        <div data-toggle="buttons" >
+            <label class="btn active" (click)="draw(color)">
+                <input type="radio" name="options" autocomplete="off" checked > Draw
+            </label>
+            <label class="btn" (click)="eraser()">
+                <input type="radio" name="options" autocomplete="off"> Erase
+            </label>
+        </div>
+        <button (click)="clear()">Clear</button>
+    </div>
+    <p>Score/Timer</p>
+    <!-- canvas component -->
+    <app-canvas [(markerColor)] = "selectedColor" [size]="selectedSize"></app-canvas>
+    <p>Draw: "apple" / Guess:</p>
+</div>
 
-<input type="button" (click)="changeColor(blue)" value="blue">
-<input type="button" (click)="changeColor(green)" value="green">
-<input type="button" (click)="changeColor(pink)" value="pink">
-
-<router-outlet></router-outlet>
