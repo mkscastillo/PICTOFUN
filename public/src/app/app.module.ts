@@ -3,16 +3,21 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { GameComponent } from './game/game.component';
+import { CanvasComponent } from './canvas/canvas.component';
+import { ColorPickerModule } from 'ngx-color-picker';
+
+// import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GameComponent
+    CanvasComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    // SocketIoModule.forRoot(config),
+    ColorPickerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

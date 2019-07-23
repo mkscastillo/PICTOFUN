@@ -1,21 +1,69 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpService } from './http.service';
+import { Component, AfterViewInit, ViewChild } from '@angular/core';
+import { CanvasComponent } from './canvas/canvas.component';
+
+// import * as io from "socket.io-client";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements AfterViewInit{
+
+    @ViewChild(CanvasComponent, {static:false})
+    private canvasComponent : CanvasComponent;
+
+    selectedColor = "000000";
+    selectedSize = 20;
+    bomb : any;
+    title = 'public';
+    constructor() {};
+
+    // socket = io('http:localhost:8000');
+    
+    ngAfterViewInit() {
+      console.log(this.selectedColor);
+    }
+
+    ngOnInit(){
+        // this.socket.on("clear-board",function(){
+        //     console.log("CLEARING ALL BOARDS")
+        //     this.canvasComponent.redraw();
+        // }.bind(this))
+    }
   
-  constructor(private _httpService: HttpService) { }
+    update(jscolor) {
+      console.log("jscolor: " + jscolor);
+      this.selectedColor = jscolor;
+      console.log("selectedColor: " + this.selectedColor);
+    }
 
-  ngOnInit(){
-    this.askName();
-  }
+    small() {
+      this.selectedSize= 3;
+    }
 
-  askName(){
-    var name = prompt("What is your name?");
-    console.log(name);
+    medium() {
+      this.selectedSize = 6; 
+    }
+
+    large() {
+      this.selectedSize = 15;
+    }
+
+    eraser() {
+      this.selectedColor = "white"; 
+      console.log(this.selectedColor);
+    }
+  
+    draw(jscolor){
+      this.selectedColor = jscolor;
+      if(this.selectedColor == undefined) {
+        this.selectedColor = "black"
+      }
+    }
+
+    clear() {
+        this.canvasComponent.redraw();
+        // this.socket.emit("clear");
+    }
   }
-}
