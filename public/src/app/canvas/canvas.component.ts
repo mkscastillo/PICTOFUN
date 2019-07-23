@@ -1,7 +1,7 @@
-import { Component, Input, ElementRef, AfterViewInit, ViewChild, OnInit, HostListener } from '@angular/core';
+import { Component, Input, ElementRef, AfterViewInit, ViewChild, OnInit, HostListener, Injectable } from '@angular/core';
 import { fromEvent } from 'rxjs';
 import { switchMap, takeUntil, pairwise } from 'rxjs/operators'
-// import * as io from "socket.io-client";
+import * as io from "socket.io-client";
 
 @Component({
   selector: 'app-canvas',
@@ -18,8 +18,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   
   @Input() markerColor: string;
   @Input() size : number;
-
-  // socket = io('http://localhost:8000');
+  
+  socket = io();
 
   public cx: CanvasRenderingContext2D;
 
@@ -41,9 +41,13 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(){
-      // this.socket.on("draw-this",function(data){
-      //     this.drawOnCanvas(data.prevPos,data.currentPos,data.color, data.size);
-      // }.bind(this))
+      this.socket.on("draw-this",function(data){
+        // console.log("received coordinates from server", data);
+          this.drawOnCanvas(data.prevPos,data.currentPos,data.color, data.size);
+      }.bind(this))
+      this.socket.on("clear-board", function(){
+        this.redraw();
+      })
   }
 
   private captureEvents(canvasEl: HTMLCanvasElement) {
@@ -74,9 +78,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     
           // this method we'll implement soon to do the actual drawing
           this.drawOnCanvas(prevPos, currentPos,this.markerColor, this.size);
-          // this.socket.emit("draw-coordinates",{prevPos: prevPos, currentPos: currentPos,color: this.markerColor, size: this.size});
-
-
+          this.socket.emit("draw-coordinates",{prevPos: prevPos, currentPos: currentPos,color: this.markerColor, size: this.size});
       })
 
     fromEvent(canvasEl, 'mousedown')
@@ -112,8 +114,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   
         // this method we'll implement soon to do the actual drawing
         this.drawOnCanvas(prevPos, currentPos,this.markerColor, this.size);
-        // this.socket.emit("draw-coordinates",{prevPos: prevPos, currentPos: currentPos,color: this.markerColor, size: this.size});
-
+        this.socket.emit("draw-coordinates",{prevPos: prevPos, currentPos: currentPos,color: this.markerColor, size: this.size});
       });
   }
 
