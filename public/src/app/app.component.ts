@@ -8,7 +8,6 @@ import * as io from "socket.io-client";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-
 export class AppComponent implements AfterViewInit{
     socket: any;
     name: any;
@@ -20,6 +19,7 @@ export class AppComponent implements AfterViewInit{
     word: any = '';
     hasGuess: boolean = false;
     message: any;
+
     @ViewChild(CanvasComponent, {static:false})
     private canvasComponent : CanvasComponent;
 

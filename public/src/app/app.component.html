@@ -32,20 +32,19 @@
     <!-- canvas component -->
     <div *ngIf="game_started">
         <app-canvas [(markerColor)] = "selectedColor" [size]="selectedSize" [name]="name"></app-canvas>
-    </div>
-    <div *ngIf="show_word; else elseBlock">
-        <p>Draw: {{word}}</p>
-    </div>
-    <ng-template #elseBlock>
-        <div *ngIf="hasGuess">
-            <p>{{message}}</p>
+        <div *ngIf="show_word; else elseBlock">
+            <p>Draw: {{word}}</p>
         </div>
-        <form (submit)="guessing()">
-            <input type="text" [(ngModel)]="guess" name="guess">
-            <input type="submit" value="Submit guess">
-        </form>
-    </ng-template>
-    
+        <ng-template #elseBlock>
+            <div *ngIf="hasGuess">
+                <p>{{message}}</p>
+            </div>
+            <form (submit)="guessing()">
+                <input type="text" [(ngModel)]="guess" name="guess">
+                <input type="submit" value="Submit guess">
+            </form>
+        </ng-template>
+    </div>
     
 </div>
 

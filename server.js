@@ -17,9 +17,10 @@ const io = require('socket.io')(server);
 
 var users = [];
 var drawer;
+
 /////////////
 
-  var c = 5;
+  var c = 10;
   var t;
   var timer_is_on = false;
 
@@ -53,6 +54,7 @@ var drawer;
   //   timer_is_on = false;
   // }
 //////////
+
 io.on('connection', function (socket) {
   // console.log('User connected');
   socket.on('disconnect', function() {
