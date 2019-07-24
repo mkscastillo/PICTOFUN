@@ -1,5 +1,4 @@
 import { Component, Input, ElementRef, AfterViewInit, ViewChild, OnInit, HostListener, Injectable } from '@angular/core';
-// import { Socket } from 'ng-socket-io';
 import { fromEvent } from 'rxjs';
 import { switchMap, takeUntil, pairwise } from 'rxjs/operators'
 import * as io from "socket.io-client";
@@ -16,10 +15,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   @Input() public width = window.innerWidth * .6;
   @Input() public height = window.innerHeight * .45;
-  
+  @Input() name: string;
   @Input() markerColor: string;
   @Input() size : number;
-
+  
   socket = io();
 
   public cx: CanvasRenderingContext2D;
@@ -47,8 +46,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           this.drawOnCanvas(data.prevPos,data.currentPos,data.color, data.size);
       }.bind(this))
       this.socket.on("clear-board", function(){
+        console.log("redraw");
         this.redraw();
       })
+      
   }
 
   private captureEvents(canvasEl: HTMLCanvasElement) {
@@ -116,14 +117,12 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         // this method we'll implement soon to do the actual drawing
         this.drawOnCanvas(prevPos, currentPos,this.markerColor, this.size);
         this.socket.emit("draw-coordinates",{prevPos: prevPos, currentPos: currentPos,color: this.markerColor, size: this.size});
-
       });
   }
 
 
 
   private drawOnCanvas(prevPos: { x: number, y: number }, currentPos: { x: number, y: number }, color, size) {
-      console.log("drawing");
       this.cx.strokeStyle = color;
       this.cx.lineWidth = size;
     if (!this.cx) { return; }
@@ -142,6 +141,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   public redraw() {
       console.log("Redrawing");
       this.cx.clearRect(0,0, this.width, this.height);
+      // this.socket.emit("clear")
     }
 
 

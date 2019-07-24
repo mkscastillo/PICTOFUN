@@ -24,9 +24,27 @@
         </div>
         <button (click)="clear()">Clear</button>
     </div>
-    <p>Score/Timer</p>
+    <div *ngIf="enable_start">
+        <button  (click)="start_game()">Start game</button>
+    </div>
+    <p>{{name}}'s Score: {{score}}</p>
+    <p>Timer: {{timer}}</p>
     <!-- canvas component -->
-    <app-canvas [(markerColor)] = "selectedColor" [size]="selectedSize"></app-canvas>
-    <p>Draw: "apple" / Guess:</p>
+    <div *ngIf="game_started">
+        <app-canvas [(markerColor)] = "selectedColor" [size]="selectedSize" [name]="name"></app-canvas>
+        <div *ngIf="show_word; else elseBlock">
+            <p>Draw: {{word}}</p>
+        </div>
+        <ng-template #elseBlock>
+            <div *ngIf="hasGuess">
+                <p>{{message}}</p>
+            </div>
+            <form (submit)="guessing()">
+                <input type="text" [(ngModel)]="guess" name="guess">
+                <input type="submit" value="Submit guess">
+            </form>
+        </ng-template>
+    </div>
+    
 </div>
 
