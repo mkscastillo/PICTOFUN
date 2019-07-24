@@ -4,6 +4,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CanvasComponent } from './canvas/canvas.component';
 import { ColorPickerModule } from 'ngx-color-picker';
+import { FormsModule } from '@angular/forms';
 
 // import { SocketIoModule, SocketIoConfig } from 'ng-socket-io';
 
@@ -17,7 +18,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    // SocketIoModule.forRoot(config),
+    FormsModule,
     ColorPickerModule
   ],
   providers: [],
