@@ -102,10 +102,10 @@ export class AppComponent implements AfterViewInit{
       console.log("on guessing guess: ", this.guess);
       console.log("on guessing word: ", this.word);
       if(this.guess == this.word){
-        this.message = "correct!"
+        this.message = "Correct!"
         console.log("correct")
       } else {
-        this.message = "guess again"
+        this.message = "Guess Again!"
         console.log("guess again")
       }
       this.hasGuess = true;
