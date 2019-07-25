@@ -2,49 +2,82 @@
     <!-- jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 
-<h1>PictoFun</h1>
-<h2>It's picture fun for everyone!</h2>
-<div class="container">
-    <!-- canvas nav -->
-    <div class="navbar navbar-light bg-light">
-        <input (colorPickerChange)="update(color)" (colorPickerSelect)="update(color)"  [cpOKButton]="true" [(colorPicker)]="color" [style.background]="color" [cpPosition]= "'bottom'" value="Choose Color" />
-        <button (click)="small()">Small</button>
-        <button (click)="medium()">Medium</button>
-        <button (click)="large()">Large</button>
-        <div data-toggle="buttons" >
-            <label class="btn active" (click)="draw(color)">
-                <input type="radio" name="options" autocomplete="off" checked > Draw
-            </label>
-            <label class="btn" (click)="eraser()">
-                <input type="radio" name="options" autocomplete="off"> Erase
-            </label>
-        </div>
-        <button (click)="clear()">Clear</button>
-    </div>
-    <div *ngIf="enable_start">
-        <button  (click)="start_game()">Start game</button>
-    </div>
-    <p>{{name}}'s Score: {{score}}</p>
-    <p>Timer: {{timer}}</p>
-    <!-- canvas component -->
-    <div *ngIf="game_started">
-        <app-canvas [(markerColor)] = "selectedColor" [size]="selectedSize" [name]="name"></app-canvas>
-        <div *ngIf="show_word; else elseBlock">
-            <p>Draw: {{word}}</p>
-        </div>
-        <ng-template #elseBlock>
-            <div *ngIf="hasGuess">
-                <p>{{message}}</p>
+<body class="cover-container bg-light">
+    <h1 class="row justify-content-center">Urban Pictionary</h1>
+    <div class="container border">
+        <!-- canvas nav -->
+        <div class="navbar navbar-light bg-light">
+            <input class="btn btn-secondary" (colorPickerChange)="update(color)" (colorPickerSelect)="update(color)"
+                [cpOKButton]="true" [(colorPicker)]="color" [style.background]="color" [cpPosition]="'bottom'"
+                value="Choose Color" />
+            <button class="btn btn-outline-secondary" (click)="small()">Small</button>
+            <button class="btn btn-outline-secondary" (click)="medium()">Medium</button>
+            <button class="btn btn-outline-secondary" (click)="large()">Large</button>
+            <div data-toggle="buttons">
+                <label class="btn active" (click)="draw(color)">
+                    <input type="radio" name="options" autocomplete="off" checked> Draw
+                </label>
+                <label class="btn" (click)="eraser()">
+                    <input type="radio" name="options" autocomplete="off"> Erase
+                </label>
             </div>
-            <form (submit)="guessing()">
-                <input type="text" [(ngModel)]="guess" name="guess">
-                <input type="submit" value="Submit guess">
-            </form>
-        </ng-template>
-    </div>
-    
-</div>
+            <button class="btn btn-secondary" (click)="clear()">Clear</button>
+        </div>
+        <div *ngIf="!game_started && !enable_start && !isGameOngoing" class="row justify-content-center">
+            <p>Welcome, {{name}}! We're waiting for others to join game...</p>
+        </div>
+        <div *ngIf="!game_started && enable_start && !isGameOngoing" class="row justify-content-center">
+            <p>Alright, {{name}}! Press "start" to begin game...</p>
+        </div>
+        <!-- <div *ngIf="game_started && !enable_start && isGameOngoing" class="row justify-content-center">
+            <p>Please wait for new round</p>
+        </div> -->
+        <div *ngIf="enable_start && !isGameOngoing" class="row justify-content-center">
+            <button class="btn btn-secondary" (click)="start_game()">Start</button>
+        </div>
+        <div *ngIf="game_started">
+            <p>{{name}}'s Score: {{score}}</p>
+            <p>Timer: {{timer}}</p>
+        </div>
 
+        <div *ngIf="loading">
+           <p>Waiting for round to start</p>
+        </div>
+
+        <!-- canvas component -->
+        <div *ngIf="game_started && !loading">
+            <div *ngIf="show_word">
+                <h2 class="row justify-content-center">Please draw:</h2>
+                <h2 class="row justify-content-center">"{{word}}"</h2>
+            </div>
+            <div *ngIf="!show_word">
+                <h2 class="row justify-content-center">What ever could it be?</h2>
+            </div>
+            <app-canvas [(markerColor)]="selectedColor" [size]="selectedSize" [name]="name"
+                class="row justify-content-center"></app-canvas>
+
+            <div *ngIf="!show_word">
+
+                <div *ngIf="hasGuess" class="row justify-content-center">
+                    <p>{{message}}</p>
+                </div>
+
+                <form (submit)="guessing()">
+                    <div class="row justify-content-center">
+                        <div class="form-group col-md-4">
+                            <input type="text" class="form-control" [(ngModel)]="guess" name="guess">
+                        </div>
+                        <div class="form-group">
+                            <input class="btn btn-secondary" type="submit" value="Guess">
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</body>

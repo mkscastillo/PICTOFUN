@@ -18,8 +18,10 @@ const io = require('socket.io')(server);
 var users = [];
 var drawer;
 var x = 0;
+var isGameOngoing = false;
 
 /////////////
+// TIMER
 
   var c;
   var t;
@@ -27,47 +29,43 @@ var x = 0;
 
   function timedCount() {
     c = c - 1;
-    // if( c <= 0 ){
-    //   console.log("c less than")
-    //   stopTimer();
-    // }
+    g = g - 1;
     
-    if(c>-1){
+    if(c>-1 && !(c <= 25 && c >= 20)){
       setTimeout(timedCount, 1000);
       io.emit('timer',{timer:c});
     }
+    if(c <= 25 && c >= 20){
+      setTimeout(timedCount, 1000);
+      io.emit('loading',{timer:g});
+    }
+
     if(c == 0){
       newRound();
     }
-    // t = setTimeout(timedCount, 1000);
-    // console.log("------", t)
   }
 
   function startTimer() {
-    c = 15;
+    c = 25;
+    g = 5;
     if (!timer_is_on) {
       timer_is_on = true;
       timedCount();
     }
   }
 
-  // function stopTimer(){
-  //   console.log("t", t)
-  //   clearTimeout(t);
-  //   timer_is_on = false;
-  // }
 //////////
 
-function newRound(){
-  x++;
-  drawer = users[x % users.length];
-  console.log("new drawer: ", drawer);
-  io.emit('new_game',{word:"apple", drawer:drawer})
-  startTimer();
+function setIsGameOngoing(){
+  isGameOngoing = true;
 }
 
 io.on('connection', function (socket) {
   // console.log('User connected');
+  if(isGameOngoing){
+    io.emit('isGameOngoing',{isGameOngoing: isGameOngoing})
+  }
+
   socket.on('disconnect', function() {
     // console.log('User disconnected');
   });
@@ -90,10 +88,11 @@ io.on('connection', function (socket) {
     if(users.length > 1){
       console.log(users);
       io.emit('enable_start');
-    }
+      }
   });
 
-  socket.on('game_started', function(name){
+  socket.on('game_started', function(){
+    setIsGameOngoing();
     io.emit('new_game',{word:"apple", drawer:drawer})
     startTimer();
   })
@@ -102,3 +101,11 @@ io.on('connection', function (socket) {
     newRound();
   })
 })
+
+function newRound(){
+  x++;
+  drawer = users[x % users.length];
+  console.log("new drawer: ", drawer);
+  io.emit('new_game',{word:"apple", drawer:drawer})
+  startTimer();
+}
