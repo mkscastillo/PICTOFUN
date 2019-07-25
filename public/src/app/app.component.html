@@ -41,8 +41,8 @@
                 <button class="btn btn-secondary" (click)="start_game()">Start</button>
             </div>
             <div *ngIf="game_started">
-                <p>{{name}}'s Score: {{score}}</p>
-                <p>Timer: {{timer}}</p>
+                <p>{{name}}'s Score: <span class="btn btn-primary">{{score}}</span></p>
+                <p>Timer: <span class="btn btn-primary">{{timer}}</span></p>
             </div>
 
             <div *ngIf="loading">
@@ -61,7 +61,7 @@
                 <app-canvas [(markerColor)]="selectedColor" [size]="selectedSize" [name]="name"
                     class="row justify-content-center"></app-canvas>
 
-                <div *ngIf="show_word == false">
+                <div *ngIf="!show_word">
                     <div *ngIf="hasGuess" class="row justify-content-center">
                         <p>{{message}}</p>
                     </div>

@@ -48,8 +48,10 @@ export class AppComponent implements AfterViewInit{
       }.bind(this));
       
       this.socket.on('new_game', function(data){
+        this.hasGuess = false;
+        this.message = '';
+        this.guess = '';
         this.isGameOngoing = data.isGameOngoing;
-        console.log("is it ongoing? ", this.isGameOngoing);
         this.enable_start = false;
         this.game_started = true;
         this.loading = true;
@@ -116,7 +118,7 @@ export class AppComponent implements AfterViewInit{
       if(this.guess == this.word){
         this.message = "Correct!";
         this.score++;
-        this.socket.emit('new_round');
+        // setTimeout(this.socket.emit('new_round'),10000);
       } else {
         this.message = "Guess Again!"
       }
