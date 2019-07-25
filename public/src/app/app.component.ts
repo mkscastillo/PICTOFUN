@@ -19,6 +19,7 @@ export class AppComponent implements AfterViewInit{
     word: any = '';
     hasGuess: boolean = false;
     message: any;
+    score: number = 0;
 
     @ViewChild(CanvasComponent, {static:false})
     private canvasComponent : CanvasComponent;
@@ -89,7 +90,7 @@ export class AppComponent implements AfterViewInit{
     draw(jscolor){
       this.selectedColor = jscolor;
       if(this.selectedColor == undefined) {
-        this.selectedColor = "black"
+        this.selectedColor = "black";
       }
     }
 
@@ -102,8 +103,10 @@ export class AppComponent implements AfterViewInit{
       console.log("on guessing guess: ", this.guess);
       console.log("on guessing word: ", this.word);
       if(this.guess == this.word){
-        this.message = "correct!"
-        console.log("correct")
+        this.message = "correct!";
+        this.score++;
+        // this.newRound();
+        this.socket.emit('new_round');
       } else {
         this.message = "guess again"
         console.log("guess again")

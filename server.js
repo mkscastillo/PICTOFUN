@@ -17,10 +17,11 @@ const io = require('socket.io')(server);
 
 var users = [];
 var drawer;
+var x = 0;
 
 /////////////
 
-  var c = 10;
+  var c;
   var t;
   var timer_is_on = false;
 
@@ -29,19 +30,21 @@ var drawer;
     // if( c <= 0 ){
     //   console.log("c less than")
     //   stopTimer();
-    // } else {
-
     // }
     
     if(c>-1){
       setTimeout(timedCount, 1000);
       io.emit('timer',{timer:c});
     }
+    if(c == 0){
+      newRound();
+    }
     // t = setTimeout(timedCount, 1000);
     // console.log("------", t)
   }
 
   function startTimer() {
+    c = 15;
     if (!timer_is_on) {
       timer_is_on = true;
       timedCount();
@@ -54,6 +57,14 @@ var drawer;
   //   timer_is_on = false;
   // }
 //////////
+
+function newRound(){
+  x++;
+  drawer = users[x % users.length];
+  console.log("new drawer: ", drawer);
+  io.emit('new_game',{word:"apple", drawer:drawer})
+  startTimer();
+}
 
 io.on('connection', function (socket) {
   // console.log('User connected');
@@ -74,7 +85,7 @@ io.on('connection', function (socket) {
   socket.on('name', function(name){
     users.push(name.name);
     if(users.length == 1){
-      drawer = users[0];
+      drawer = users[x];
     }
     if(users.length > 1){
       console.log(users);
@@ -85,5 +96,9 @@ io.on('connection', function (socket) {
   socket.on('game_started', function(name){
     io.emit('new_game',{word:"apple", drawer:drawer})
     startTimer();
-    })
+  })
+
+  socket.on('new_round', function(){
+    newRound();
+  })
 })
