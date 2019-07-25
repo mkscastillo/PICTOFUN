@@ -16,8 +16,12 @@ const server = app.listen(8000);
 const io = require('socket.io')(server);
 
 var users = [];
+var userIndex = 0;
+var words = ['egg','shirt','book','dog','hat','kite','cupcake','cookie','snowman','bed'];
+var wordIndex = 0;
+var word;
 var drawer;
-var x = 0;
+
 var isGameOngoing = false;
 
 /////////////
@@ -83,7 +87,7 @@ io.on('connection', function (socket) {
   socket.on('name', function(name){
     users.push(name.name);
     if(users.length == 1){
-      drawer = users[x];
+      drawer = users[userIndex];
     }
     if(users.length > 1){
       console.log(users);
@@ -93,7 +97,7 @@ io.on('connection', function (socket) {
 
   socket.on('game_started', function(){
     setIsGameOngoing();
-    io.emit('new_game',{word:"apple", drawer:drawer})
+    io.emit('new_game',{word:words[wordIndex], drawer:drawer})
     startTimer();
   })
 
@@ -103,9 +107,12 @@ io.on('connection', function (socket) {
 })
 
 function newRound(){
-  x++;
-  drawer = users[x % users.length];
+  userIndex++;
+  drawer = users[userIndex % users.length];
   console.log("new drawer: ", drawer);
-  io.emit('new_game',{word:"apple", drawer:drawer})
+  wordIndex++;
+  word = words[wordIndex % words.length];
+  console.log("new word: ", word);
+  io.emit('new_game',{word:words[wordIndex], drawer:drawer})
   startTimer();
 }
