@@ -13,8 +13,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   
   @ViewChild('canvas', {static: true}) public canvas: ElementRef;
 
-  @Input() public width = window.innerWidth * .6;
-  @Input() public height = window.innerHeight * .45;
+  @Input() public width = window.innerWidth;
+  @Input() public height = window.innerHeight;
   @Input() name: string;
   @Input() markerColor: string;
   @Input() size : number;
@@ -29,7 +29,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
     canvasEl.width = this.width;
     canvasEl.height = this.height;
-    canvasEl.style.margin = "50px";
+    
     canvasEl.style.background = "white";
 
 

@@ -1,7 +1,10 @@
-.container {
-    margin: 0px;
-    padding: 0px;
-    height: 100%;
-    width: 100%;
+.sky {
     background-color: rgb(190, 226, 248);
+}
+
+html, body {
+    height: 100%;
+display: -webkit-box;
+position: fixed;
+width: 100%;
 }
