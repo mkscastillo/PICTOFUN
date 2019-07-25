@@ -41,8 +41,8 @@
                 <button class="btn btn-secondary" (click)="start_game()">Start</button>
             </div>
             <div *ngIf="game_started">
-                <p>{{name}}'s Score: {{score}}</p>
-                <p>Timer: {{timer}}</p>
+                <p>{{name}}'s Score: <span class="btn btn-primary">0</span></p>
+                <p>Timer: <span class="btn btn-primary">{{timer}}</span></p>
             </div>
 
             <div *ngIf="loading">
