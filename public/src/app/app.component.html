@@ -27,10 +27,42 @@
             </div>
             <button class="btn btn-secondary" (click)="clear()">Clear</button>
         </div>
+    <div class="container sky p-3">
+        <div *ngIf="!game_started && !enable_start && !isGameOngoing" class="row justify-content-center">
+            <p>Welcome, {{name}}! We're waiting for others to join game...</p>
+        </div>
+        <div *ngIf="!game_started && enable_start && !isGameOngoing" class="row justify-content-center">
+            <p>Alright, {{name}}! Press "start" to begin game...</p>
+        </div>
+        <!-- <div *ngIf="game_started && !enable_start && isGameOngoing" class="row justify-content-center">
+            <p>Please wait for new round</p>
+        </div> -->
+        <div *ngIf="enable_start && !isGameOngoing" class="row justify-content-center">
+            <button class="btn btn-secondary" (click)="start_game()">Start</button>
+        </div>
+        <div *ngIf="game_started">
+            <p>{{name}}'s Score: {{score}}</p>
+            <p>Timer: {{timer}}</p>
+        </div>
 
-        <div class="container sky p-3">
+        <div *ngIf="loading">
+           <p>Waiting for round to start</p>
+        </div>
 
-            <div *ngIf="game_started == false && enable_start == false" class="row justify-content-center">
+        <!-- canvas component -->
+        <div *ngIf="game_started && !loading">
+            <div *ngIf="show_word">
+                <h2 class="row justify-content-center">Please draw:</h2>
+                <h2 class="row justify-content-center">"{{word}}"</h2>
+            </div>
+            <div *ngIf="!show_word">
+                <h2 class="row justify-content-center">What ever could it be?</h2>
+            </div>
+            <app-canvas [(markerColor)]="selectedColor" [size]="selectedSize" [name]="name"
+                class="row justify-content-center"></app-canvas>
+
+            <div *ngIf="!show_word">
+<!--             <div *ngIf="game_started == false && enable_start == false" class="row justify-content-center">
                 <p>Welcome, {{name}}! We're waiting for others to join game...</p>
             </div>
             <div *ngIf="game_started == false && enable_start" class="row justify-content-center">
@@ -42,8 +74,7 @@
             <div *ngIf="game_started">
                 <p>{{name}}'s Score: <span class="btn btn-primary">0</span></p>
                 <p>Timer: <span class="btn btn-primary">{{timer}}</span></p>
-            </div>
-
+            </div> -->
             <!-- canvas component -->
             <div *ngIf="game_started">
                 <div *ngIf="show_word">

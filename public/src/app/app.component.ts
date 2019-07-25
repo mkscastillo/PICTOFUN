@@ -19,6 +19,9 @@ export class AppComponent implements AfterViewInit{
     word: any = '';
     hasGuess: boolean = false;
     message: any;
+    score: number = 0;
+    isGameOngoing: boolean = false;
+    loading: boolean = false;
 
     @ViewChild(CanvasComponent, {static:false})
     private canvasComponent : CanvasComponent;
@@ -31,18 +34,29 @@ export class AppComponent implements AfterViewInit{
     ngAfterViewInit() {
       console.log(this.selectedColor);
       this.socket.on('enable_start', function(){
-        console.log("are you working")
         this.enable_start = true;
-        console.log(this.enable_start)
+        console.log(this.enable_start);
       }.bind(this));
+      
       this.socket.on('timer', function(timer){
         this.timer = timer.timer;
+        this.loading = false;
       }.bind(this));
+      this.socket.on('loading', function(timer){
+        this.timer = timer.timer;
+        this.loading = true;
+      }.bind(this));
+      
       this.socket.on('new_game', function(data){
+        this.isGameOngoing = data.isGameOngoing;
+        console.log("is it ongoing? ", this.isGameOngoing);
         this.enable_start = false;
         this.game_started = true;
+        this.loading = true;
         if(data.drawer == this.name){
           this.show_word = true;
+        } else {
+          this.show_word = false;
         }
         this.word = data['word'];
         console.log("something", this.word);
@@ -52,11 +66,14 @@ export class AppComponent implements AfterViewInit{
     ngOnInit(){
         this.name = prompt("What is your name?");
         this.socket = io();
+        this.socket.emit("name", {name:this.name});  
         this.socket.on("clear-board",function(){
             console.log("CLEARING ALL BOARDS")
             this.canvasComponent.redraw();
         }.bind(this))
-        this.socket.emit("name", {name:this.name});  
+        this.socket.on('isGameOngoing', function(data){
+          this.isGameOngoing = data.isGameOngoing;
+        }.bind(this));
     }
 
     start_game(){
@@ -64,9 +81,7 @@ export class AppComponent implements AfterViewInit{
     }
   
     update(jscolor) {
-      console.log("jscolor: " + jscolor);
       this.selectedColor = jscolor;
-      console.log("selectedColor: " + this.selectedColor);
     }
 
     small() {
@@ -83,13 +98,12 @@ export class AppComponent implements AfterViewInit{
 
     eraser() {
       this.selectedColor = "white"; 
-      console.log(this.selectedColor);
     }
   
     draw(jscolor){
       this.selectedColor = jscolor;
       if(this.selectedColor == undefined) {
-        this.selectedColor = "black"
+        this.selectedColor = "black";
       }
     }
 
@@ -99,14 +113,12 @@ export class AppComponent implements AfterViewInit{
     }
 
     guessing(){
-      console.log("on guessing guess: ", this.guess);
-      console.log("on guessing word: ", this.word);
       if(this.guess == this.word){
-        this.message = "Correct!"
-        console.log("correct")
+        this.message = "Correct!";
+        this.score++;
+        this.socket.emit('new_round');
       } else {
         this.message = "Guess Again!"
-        console.log("guess again")
       }
       this.hasGuess = true;
     }

@@ -17,46 +17,55 @@ const io = require('socket.io')(server);
 
 var users = [];
 var drawer;
+var x = 0;
+var isGameOngoing = false;
 
 /////////////
+// TIMER
 
-  var c = 10;
+  var c;
   var t;
   var timer_is_on = false;
 
   function timedCount() {
     c = c - 1;
-    // if( c <= 0 ){
-    //   console.log("c less than")
-    //   stopTimer();
-    // } else {
-
-    // }
+    g = g - 1;
     
-    if(c>-1){
+    if(c>-1 && !(c <= 25 && c >= 20)){
       setTimeout(timedCount, 1000);
       io.emit('timer',{timer:c});
     }
-    // t = setTimeout(timedCount, 1000);
-    // console.log("------", t)
+    if(c <= 25 && c >= 20){
+      setTimeout(timedCount, 1000);
+      io.emit('loading',{timer:g});
+    }
+
+    if(c == 0){
+      newRound();
+    }
   }
 
   function startTimer() {
+    c = 25;
+    g = 5;
     if (!timer_is_on) {
       timer_is_on = true;
       timedCount();
     }
   }
 
-  // function stopTimer(){
-  //   console.log("t", t)
-  //   clearTimeout(t);
-  //   timer_is_on = false;
-  // }
 //////////
+
+function setIsGameOngoing(){
+  isGameOngoing = true;
+}
 
 io.on('connection', function (socket) {
   // console.log('User connected');
+  if(isGameOngoing){
+    io.emit('isGameOngoing',{isGameOngoing: isGameOngoing})
+  }
+
   socket.on('disconnect', function() {
     // console.log('User disconnected');
   });
@@ -74,16 +83,29 @@ io.on('connection', function (socket) {
   socket.on('name', function(name){
     users.push(name.name);
     if(users.length == 1){
-      drawer = users[0];
+      drawer = users[x];
     }
     if(users.length > 1){
       console.log(users);
       io.emit('enable_start');
-    }
+      }
   });
 
-  socket.on('game_started', function(name){
+  socket.on('game_started', function(){
+    setIsGameOngoing();
     io.emit('new_game',{word:"apple", drawer:drawer})
     startTimer();
-    })
+  })
+
+  socket.on('new_round', function(){
+    newRound();
+  })
 })
+
+function newRound(){
+  x++;
+  drawer = users[x % users.length];
+  console.log("new drawer: ", drawer);
+  io.emit('new_game',{word:"apple", drawer:drawer})
+  startTimer();
+}
