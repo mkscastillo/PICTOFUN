@@ -15,7 +15,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   @Input() public width = window.innerWidth * .6;
   @Input() public height = window.innerHeight * .45;
-  
+  @Input() name: string;
   @Input() markerColor: string;
   @Input() size : number;
   
@@ -46,8 +46,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           this.drawOnCanvas(data.prevPos,data.currentPos,data.color, data.size);
       }.bind(this))
       this.socket.on("clear-board", function(){
+        console.log("redraw");
         this.redraw();
       })
+      
   }
 
   private captureEvents(canvasEl: HTMLCanvasElement) {
@@ -139,6 +141,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   public redraw() {
       console.log("Redrawing");
       this.cx.clearRect(0,0, this.width, this.height);
+      // this.socket.emit("clear")
     }
 
 

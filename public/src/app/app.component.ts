@@ -10,6 +10,15 @@ import * as io from "socket.io-client";
 })
 export class AppComponent implements AfterViewInit{
     socket: any;
+    name: any;
+    enable_start: boolean = false;
+    game_started: boolean = false;
+    timer: any;
+    guess: any = '';
+    show_word: boolean = false;
+    word: any = '';
+    hasGuess: boolean = false;
+    message: any;
 
     @ViewChild(CanvasComponent, {static:false})
     private canvasComponent : CanvasComponent;
@@ -17,19 +26,41 @@ export class AppComponent implements AfterViewInit{
     selectedColor = "000000";
     selectedSize = 20;
     bomb : any;
-    title = 'public';
     constructor() {};
     
     ngAfterViewInit() {
       console.log(this.selectedColor);
+      this.socket.on('enable_start', function(){
+        console.log("are you working")
+        this.enable_start = true;
+        console.log(this.enable_start)
+      }.bind(this));
+      this.socket.on('timer', function(timer){
+        this.timer = timer.timer;
+      }.bind(this));
+      this.socket.on('new_game', function(data){
+        this.enable_start = false;
+        this.game_started = true;
+        if(data.drawer == this.name){
+          this.show_word = true;
+        }
+        this.word = data['word'];
+        console.log("something", this.word);
+      }.bind(this));
     }
 
     ngOnInit(){
-        this.socket = io("http://localhost:8000");
+        this.name = prompt("What is your name?");
+        this.socket = io();
         this.socket.on("clear-board",function(){
             console.log("CLEARING ALL BOARDS")
             this.canvasComponent.redraw();
         }.bind(this))
+        this.socket.emit("name", {name:this.name});  
+    }
+
+    start_game(){
+      this.socket.emit('game_started',{});
     }
   
     update(jscolor) {
@@ -65,5 +96,18 @@ export class AppComponent implements AfterViewInit{
     clear() {
         this.canvasComponent.redraw();
         this.socket.emit("clear");
+    }
+
+    guessing(){
+      console.log("on guessing guess: ", this.guess);
+      console.log("on guessing word: ", this.word);
+      if(this.guess == this.word){
+        this.message = "correct!"
+        console.log("correct")
+      } else {
+        this.message = "guess again"
+        console.log("guess again")
+      }
+      this.hasGuess = true;
     }
   }
