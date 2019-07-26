@@ -17,8 +17,18 @@ const io = require('socket.io')(server);
 
 var users = [];
 var userIndex = 0;
-var words = ['egg','shirt','book','dog','hat','kite','cupcake','cookie','snowman','bed'];
+words = [
+  //food
+  ["apple", "cheese", "eggplant", "pizza", "peach", "banana", "egg", "cookie", "watermelon", "pasta"],
+  //animals
+  ["turtle", "giraffe", "shark", "zebra", "snail", "lion", "snake", "raccoon", "duck", "rhinoceros"],
+  //nature
+  ["tree", "cloud", "waterfall", "volcano", "flower", "beach", "snowflake", "river", "geyser", "iceberg"],
+  //halloween
+  ["broom", "skeleton", "devil", "ghost", "tombstone", "cauldron", "witch", "spider", "mummy", "vampire"],
+]
 var wordIndex = 0;
+var wordArray = 0;
 var word;
 var drawer;
 
@@ -97,7 +107,7 @@ io.on('connection', function (socket) {
 
   socket.on('game_started', function(){
     setIsGameOngoing();
-    io.emit('new_game',{word:words[wordIndex], drawer:drawer})
+    io.emit('new_game',{word:words[wordArray][wordIndex], drawer:drawer})
     startTimer();
   })
 
@@ -111,8 +121,11 @@ function newRound(){
   drawer = users[userIndex % users.length];
   console.log("new drawer: ", drawer);
   wordIndex++;
-  word = words[wordIndex % words.length];
+  if(wordIndex == 10){
+    wordArray = ((wordArray + 1) % words.length);
+  }
+  word = words[wordArray][wordIndex % words[wordArray].length];
   console.log("new word: ", word);
-  io.emit('new_game',{word:words[wordIndex], drawer:drawer})
+  io.emit('new_game',{word:word, drawer:drawer})
   startTimer();
 }
