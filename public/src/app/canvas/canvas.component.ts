@@ -29,7 +29,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
     canvasEl.width = this.width;
     canvasEl.height = this.height;
-    
     canvasEl.style.background = "white";
 
 
