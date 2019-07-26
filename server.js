@@ -15,6 +15,7 @@ app.all("*", (req,res,next) => {
 const server = app.listen(8000);
 const io = require('socket.io')(server);
 
+var scores = [];
 var users = [];
 var userIndex = 0;
 words = [
@@ -28,10 +29,10 @@ words = [
   ["broom", "skeleton", "devil", "ghost", "tombstone", "cauldron", "witch", "spider", "mummy", "vampire"],
 ]
 var wordIndex = 0;
-var wordArray = 0;
+var wordArray = 1;
 var word;
 var drawer;
-
+var winner = '';
 var isGameOngoing = false;
 
 /////////////
@@ -55,6 +56,7 @@ var isGameOngoing = false;
     }
 
     if(c == 0){
+      io.emit('timerLapsed');
       newRound();
     }
   }
@@ -80,8 +82,15 @@ io.on('connection', function (socket) {
     io.emit('isGameOngoing',{isGameOngoing: isGameOngoing})
   }
 
-  socket.on('disconnect', function() {
-    // console.log('User disconnected');
+  socket.once('disconnect', function() {
+    console.log('User disconnected', socket.id);
+    for(x in users){
+      if(socket.id == users[x].id){
+        var idx = x;
+        users.splice(idx,1);
+      }
+    }
+    console.log("after delete: ", users);
   });
 
   socket.on('draw-coordinates',function(data){
@@ -95,9 +104,11 @@ io.on('connection', function (socket) {
   });
 
   socket.on('name', function(name){
-    users.push(name.name);
+    // users.push(name.name);
+    users.push({name:name.name, id:socket.id});
     if(users.length == 1){
-      drawer = users[userIndex];
+      drawer = users[userIndex].name;
+      // drawer = users[userIndex];
     }
     if(users.length > 1){
       console.log(users);
@@ -112,20 +123,53 @@ io.on('connection', function (socket) {
   })
 
   socket.on('new_round', function(){
+    // setTimeout(newRound(), 2000);
     newRound();
   })
+
+  socket.on('correctAnswer', function(){
+    socket.broadcast.emit('lostRound');
+  })
+
+  socket.on('scores', function(data){
+    scores.push(data);
+    console.log("inside socket: ",scores);
+  })
+
+
 })
 
 function newRound(){
   userIndex++;
-  drawer = users[userIndex % users.length];
+  drawer = users[userIndex % users.length].name;
   console.log("new drawer: ", drawer);
   wordIndex++;
-  if(wordIndex == 10){
-    wordArray = ((wordArray + 1) % words.length);
-  }
+  console.log("wordIndex: ", wordIndex);
+  
+  //if done with wordarray, move to next/getScores
+  if(wordIndex == 5){
+    io.emit('getScores');
+    setTimeout(getWinner,2000);
+    isGameOngoing = false;
+  } else if(isGameOngoing){
+  //loop through word array
   word = words[wordArray][wordIndex % words[wordArray].length];
   console.log("new word: ", word);
-  io.emit('new_game',{word:word, drawer:drawer})
-  startTimer();
+  // while(wordIndex < 10){
+    io.emit('new_game',{word:word, drawer:drawer})
+    startTimer();
+  // }
+  }
+}
+
+function getWinner(){
+  console.log("inside getwinner: ", scores);
+  var maxScore=0;
+  for(var x of scores){
+    if(x.score>maxScore){
+      maxScore = x.score;
+      winner = x.name;
+    }
+  }
+  io.emit('getWinner',{winner:winner, score:maxScore});
 }
