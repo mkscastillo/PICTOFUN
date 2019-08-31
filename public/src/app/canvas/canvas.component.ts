@@ -13,11 +13,19 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   
   @ViewChild('canvas', {static: true}) public canvas: ElementRef;
 
-  @Input() public width = window.innerWidth;
-  @Input() public height = window.innerHeight;
+  // @Input() public width = window.innerWidth;
+  // @Input() public height = window.innerHeight;
+  @Input() public width = window.innerWidth * .6;
+  @Input() public height = window.innerHeight * .45;
   @Input() name: string;
   @Input() markerColor: string;
   @Input() size : number;
+
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event) {
+  //   this.width = event.window.innerWidth;
+  //   this.height = event.window.innerHeight;
+  // }
   
   socket = io();
 
