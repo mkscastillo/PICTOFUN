@@ -27,9 +27,13 @@ words = [
   ["tree", "cloud", "waterfall", "volcano", "flower", "beach", "snowflake", "river", "geyser", "iceberg"],
   //halloween
   ["broom", "skeleton", "devil", "ghost", "tombstone", "cauldron", "witch", "spider", "mummy", "vampire"],
+  //city
+  ["stoplight","bridge","taxi"],
+  //realcity
+  // ["skyscraper","stoplight","bridge","train","taxi"],
 ]
 var wordIndex = 0;
-var wordArray = 1;
+var wordArray = 4;
 var word;
 var drawer;
 var winner = '';
@@ -46,11 +50,11 @@ var isGameOngoing = false;
     c = c - 1;
     g = g - 1;
     
-    if(c>-1 && !(c <= 25 && c >= 20)){
+    if(c>-1 && !(c <= 20 && c >= 15)){
       setTimeout(timedCount, 1000);
       io.emit('timer',{timer:c});
     }
-    if(c <= 25 && c >= 20){
+    if(c <= 20 && c >= 15){
       setTimeout(timedCount, 1000);
       io.emit('loading',{timer:g});
     }
@@ -62,7 +66,7 @@ var isGameOngoing = false;
   }
 
   function startTimer() {
-    c = 25;
+    c = 20;
     g = 5;
     if (!timer_is_on) {
       timer_is_on = true;
@@ -147,9 +151,9 @@ function newRound(){
   console.log("wordIndex: ", wordIndex);
   
   //if done with wordarray, move to next/getScores
-  if(wordIndex == 5){
+  if(wordIndex == 3){
     io.emit('getScores');
-    setTimeout(getWinner,2000);
+    setTimeout(getWinner,1000);
     isGameOngoing = false;
   } else if(isGameOngoing){
   //loop through word array
